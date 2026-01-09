@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 import plotly.express as px
 
 # =========================
@@ -12,30 +11,36 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
+# =========================
+# FUNÇÃO DE CARREGAMENTO (CACHE)
+# =========================
+@st.cache_data
+def load_data():
+    df = px.data.gapminder()
+    return df
+
+
+# =========================
+# CARREGAMENTO DOS DADOS
+# =========================
+df = load_data()
+
 # =========================
 # TÍTULO E DESCRIÇÃO
 # =========================
 st.title("Análise de Dados com Gapminder")
 st.write(
-    "Aplicação simples para explorar dados de população, "
-    "PIB per capita e expectativa de vida ao longo do tempo."
+    "Exploração interativa de dados históricos de população, "
+    "PIB per capita e expectativa de vida."
 )
 
 # =========================
-# CARREGAMENTO DOS DADOS
+# SIDEBAR - FILTROS
 # =========================
-df = px.data.gapminder()
+st.sidebar.header("Filtros")
 
-# =========================
-# EXIBIÇÃO DOS DADOS
-# =========================
-st.subheader("Visualização dos dados")
-st.dataframe(df)
-
-# =========================
-# FILTRO INTERATIVO
-# =========================
-ano = st.slider(
+ano = st.sidebar.slider(
     "Selecione o ano",
     min_value=int(df["year"].min()),
     max_value=int(df["year"].max()),
@@ -60,3 +65,9 @@ fig = px.scatter(
 )
 
 st.plotly_chart(fig, use_container_width=True)
+
+# =========================
+# TABELA
+# =========================
+st.subheader("Dados filtrados")
+st.dataframe(df_filtrado)
